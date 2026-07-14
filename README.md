@@ -8,41 +8,68 @@ Unlike traditional RAG chatbots, this project uses a **ReAct-based AI Agent** ca
 Deployed link for project:- [link](https://multi-agent--rag---platformkashish.streamlit.app/)
 ---
 
-# 🚀 Features
+# ✨ Features
 
-- 📄 Retrieval-Augmented Generation (RAG)
 - 🤖 LangGraph ReAct Agent
-- 🧠 Groq Llama 3.3 70B
-- 🔍 Semantic Search using FAISS
+- 🧠 Smart Keyword-Based Tool Routing
+- 🔑 User Provided Groq API Key
+- 🎛 Runtime Model Selection
+- 📄 Retrieval-Augmented Generation (RAG)
 - 📚 HuggingFace Sentence Transformer Embeddings
-- 📑 PDF & Web Document Ingestion
+- ⚡ Groq Llama Models
+- 🔍 FAISS Vector Search
+- 🐍 Python Code Generation & Execution
+- 🗄 SQL Query Generator
+- 📊 Mermaid Diagram Generator
+- 🐙 GitHub Repository Search
+- 📚 ArXiv Research Paper Search
+- 🧮 Calculator Tool
 - 💬 Streamlit Interactive UI
-- 🛠 Intelligent Tool Selection
-- 📊 Mermaid Diagram Rendering
-- ⚡ Fast Inference using Groq
+- 📂 PDF & Web Document Ingestion
 
 ---
 
-# 🏗 Architecture
+# 🔑 Bring Your Own API Key
+
+Instead of hardcoding an API key, the application allows every user to configure their own LLM.
+
+Users can:
+
+- Enter their own Groq API Key
+- Select the preferred Groq model
+- Initialize the Agent
+- Start asking questions
+
+This makes the application deployment-friendly and keeps API credentials private.
+
+---
 
 
-The system follows an Agentic workflow:
+# 🏗 System Architecture
 
 ```
-                    User Query
-                         │
-                         ▼
-                 LangGraph ReAct Agent
-                         │
-      ┌──────────────────┼─────────────────────┐
-      ▼                  ▼                     ▼
-Retriever Tool      Specialized Tools      LLM Reasoning
-      │                  │
-      ▼                  ▼
- FAISS Vector DB     GitHub / ArXiv /
-                     Python / SQL /
-                     Calculator /
-                     Diagram Tool
+
+                         User Query
+                              │
+                              ▼
+                 Smart Tool Router (Keyword Detection)
+                              │
+      ┌──────────────┬───────────────┬──────────────┐
+      ▼              ▼               ▼              ▼
+ Python Tool     SQL Generator   Diagram Tool   Calculator
+      │
+      ├──────────────┬───────────────┐
+      ▼              ▼               ▼
+ GitHub Tool    ArXiv Tool     Document Retriever
+                                      │
+                                      ▼
+                               FAISS Vector Store
+                                      │
+                                      ▼
+                              LangGraph ReAct Agent
+                                      │
+                                      ▼
+                               Final AI Response
 ```
 
 ---
@@ -210,14 +237,17 @@ Generate Netflix microservice architecture.
 # 📸 Demo
 
 ## Home Page
+<img width="934" height="613" alt="image" src="https://github.com/user-attachments/assets/b9d6bca2-82da-4d1c-a7cd-b97713108ce4" />
 
-<img width="904" height="716" alt="image" src="https://github.com/user-attachments/assets/af8c1f35-6de7-4930-8b87-9df21a19d4b6" />
+<img width="939" height="673" alt="image" src="https://github.com/user-attachments/assets/eb3b7b90-fd75-4e63-b4a5-d7a984466d7d" />
+
 
 ---
 
 ## Question Answering
 
 <img width="909" height="634" alt="image" src="https://github.com/user-attachments/assets/1b3f7213-c920-4f95-98d1-da6b9a149840" />
+<img width="933" height="751" alt="image" src="https://github.com/user-attachments/assets/7884dfd7-049a-4e7c-b46e-d6e5fa037426" />
 
 ---
 
@@ -225,12 +255,16 @@ Generate Netflix microservice architecture.
 
 <img width="859" height="690" alt="image" src="https://github.com/user-attachments/assets/6eda1e90-705e-4830-989a-baa1077941e1" />
 
+## It opens desired gitub repository in another tab.
+
+<img width="755" height="534" alt="image" src="https://github.com/user-attachments/assets/dce6799b-0428-4505-a8f0-70d716416195" />
 
 ---
 
 ## ArXiv Tool
 
-<img width="737" height="506" alt="image" src="https://github.com/user-attachments/assets/5aaed93a-98b9-45b4-ad56-77d348646849" />
+<img width="1917" height="784" alt="image" src="https://github.com/user-attachments/assets/ed36fa72-5640-449c-86e2-8f23057a9a27" />
+
 
 
 ---
@@ -260,9 +294,24 @@ Generate Netflix microservice architecture.
 
 <img width="864" height="766" alt="image" src="https://github.com/user-attachments/assets/631e30e8-177e-46e5-9149-f94ba6967a98" />
 
+<img width="633" height="805" alt="image" src="https://github.com/user-attachments/assets/15a2a197-4957-469f-9b5a-f5ef5cf82a6f" />
+
+## Generates Mermaid code as well
+
+<img width="942" height="794" alt="image" src="https://github.com/user-attachments/assets/737ee95e-391a-4ba1-bf1c-12ff2ae20411" />
 
 ---
 
+ # Tool Routing Demo
+ ## Arxiv tool 
+<img width="454" height="285" alt="image" src="https://github.com/user-attachments/assets/e0be9f4d-6f63-43aa-83d0-76c1cd08c030" />
+
+## Python tool
+<img width="397" height="111" alt="image" src="https://github.com/user-attachments/assets/5c520c1e-09f4-4333-bf47-ea7f520552e6" />
+
+
+## reAct Agent
+<img width="450" height="216" alt="image" src="https://github.com/user-attachments/assets/7937ab0e-74ac-456c-81ad-041558c97c6d" />
 
 
 # 📂 Project Structure
