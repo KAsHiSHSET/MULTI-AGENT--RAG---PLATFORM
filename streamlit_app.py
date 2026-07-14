@@ -87,7 +87,7 @@ def init_session():
         st.session_state.api_key = ""
 
     if "model_name" not in st.session_state:
-        st.session_state.model_name = Config.DEFAULT_MODEL
+        st.session_state.model_name = Config.MODEL_NAME
 
 
 # -------------------------------
@@ -171,25 +171,24 @@ def main():
 
     if initialize:
 
-      if groq_api_key.strip() == "":
-         st.error("Please enter your Groq API Key.")
-         st.stop()
+     if groq_api_key.strip() == "":
+        st.error("Please enter your Groq API Key.")
+        st.stop()
 
-      with st.spinner("Initializing Agent..."):
+    st.session_state.api_key = groq_api_key
+    st.session_state.model_name = model_name
 
-         graph, chunks = initialize_system(
+    with st.spinner("Initializing Agent..."):
+
+        graph, chunks = initialize_system(
             groq_api_key,
-            model_name
-         )
+            model_name,
+        )
 
-         st.session_state.graph = graph
-         st.session_state.ready = True
-         st.session_state.api_key = groq_api_key
-         st.session_state.model_name = model_name
+        st.session_state.graph = graph
+        st.session_state.ready = True
 
-      st.success(
-        f"✅ Loaded {chunks} document chunks."
-       )
+    st.success(f"✅ Loaded {chunks} document chunks.")
     if not st.session_state.ready:
 
        st.info(
