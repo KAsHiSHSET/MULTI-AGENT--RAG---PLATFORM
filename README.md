@@ -237,6 +237,10 @@ Generate Netflix microservice architecture.
 # 📸 Demo
 
 ## Home Page
+
+### User has to enter their own api key 
+<img width="833" height="603" alt="image" src="https://github.com/user-attachments/assets/6e906575-fc75-4489-b15a-2c773399f320" />
+
 <img width="934" height="613" alt="image" src="https://github.com/user-attachments/assets/b9d6bca2-82da-4d1c-a7cd-b97713108ce4" />
 
 <img width="939" height="673" alt="image" src="https://github.com/user-attachments/assets/eb3b7b90-fd75-4e63-b4a5-d7a984466d7d" />
