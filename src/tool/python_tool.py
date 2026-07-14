@@ -3,20 +3,17 @@ import contextlib
 
 from langchain_core.tools import tool
 
-from src.config.config import Config
 
+def create_python_tool(llm):
 
-llm = Config.get_llm()
+    @tool
+    def python_executor(task: str) -> str:
+        """
+        Generate Python code, execute it,
+        and return both code and output.
+        """
 
-
-@tool
-def python_executor(task: str) -> str:
-    """
-    Generate Python code, execute it,
-    and return both code and output.
-    """
-
-    prompt = f"""
+        prompt = f"""
 You are an expert Python programmer.
 
 Write ONLY executable Python code.
@@ -27,30 +24,28 @@ Task:
 {task}
 """
 
-    code = llm.invoke(prompt).content
+        code = llm.invoke(prompt).content
 
-    # Remove markdown
-    code = (
-        code.replace("```python", "")
-            .replace("```", "")
-            .strip()
-    )
+        # Remove markdown
+        code = (
+            code.replace("```python", "")
+                .replace("```", "")
+                .strip()
+        )
 
-    stdout = io.StringIO()
+        stdout = io.StringIO()
 
-    try:
+        try:
 
-        with contextlib.redirect_stdout(stdout):
+            with contextlib.redirect_stdout(stdout):
+                exec(code, {})
 
-            exec(code, {})
+            output = stdout.getvalue()
 
-        output = stdout.getvalue()
+        except Exception as e:
+            output = str(e)
 
-    except Exception as e:
-
-        output = str(e)
-
-    return f"""
+        return f"""
 Generated Python Code
 
 {code}
@@ -61,3 +56,5 @@ Execution Output
 
 {output}
 """
+
+    return python_executor

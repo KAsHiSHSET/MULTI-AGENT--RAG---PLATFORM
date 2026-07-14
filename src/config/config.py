@@ -1,6 +1,5 @@
 """Configuration module"""
 
-import os
 from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 
@@ -10,11 +9,8 @@ load_dotenv()
 
 class Config:
 
-    # API Key
-    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
-    # Model
-    MODEL_NAME = "llama-3.3-70b-versatile"
+    # Default Model
+    DEFAULT_MODEL = "llama-3.3-70b-versatile"
 
     # Embedding Model
     EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
@@ -25,14 +21,16 @@ class Config:
 
     # Default URLs
     DEFAULT_URLS = [
-    "https://lilianweng.github.io/posts/2023-06-23-agent/",
-    "https://lilianweng.github.io/posts/2024-04-12-diffusion-video/"
-     ]
+        "https://lilianweng.github.io/posts/2023-06-23-agent/",
+        "https://lilianweng.github.io/posts/2024-04-12-diffusion-video/",
+    ]
 
     @classmethod
-    def get_llm(cls):
-        return ChatGroq(
-            groq_api_key=cls.GROQ_API_KEY,
-            model=cls.MODEL_NAME,
-            temperature=0,
-        )
+    def get_llm(cls, api_key=None, model_name=None):
+
+     return ChatGroq(
+        groq_api_key=api_key or cls.GROQ_API_KEY,
+        model=model_name or cls.MODEL_NAME,
+        temperature=0,
+     )
+    

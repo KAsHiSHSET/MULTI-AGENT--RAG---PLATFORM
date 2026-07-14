@@ -4,6 +4,7 @@ import sys
 import time
 from pathlib import Path
 
+
 import streamlit as st
 import streamlit.components.v1 as components
 
@@ -73,7 +74,6 @@ st.markdown("""
 # -------------------------------
 
 def init_session():
-
     if "graph" not in st.session_state:
         st.session_state.graph = None
 
@@ -83,15 +83,24 @@ def init_session():
     if "ready" not in st.session_state:
         st.session_state.ready = False
 
+    if "api_key" not in st.session_state:
+        st.session_state.api_key = ""
+
+    if "model_name" not in st.session_state:
+        st.session_state.model_name = Config.DEFAULT_MODEL
+
 
 # -------------------------------
 # Initialize RAG
 # -------------------------------
 
 @st.cache_resource
-def initialize_system():
+def initialize_system(api_key, model_name):
 
-    llm = Config.get_llm()
+    llm = Config.get_llm(
+        api_key=api_key,
+        model_name=model_name
+    )
 
     processor = DocumentProcessor(
         chunk_size=Config.CHUNK_SIZE,
@@ -130,19 +139,64 @@ def main():
     st.caption(
         "Groq + LangGraph + HuggingFace + FAISS"
     )
+    with st.sidebar:
 
+      st.header("🔑 LLM Configuration")
+
+      groq_api_key = st.text_input(
+        "Groq API Key",
+        type="password",
+        placeholder="gsk_..."
+    )
+
+      model_name = st.selectbox(
+        "Select Model",
+        [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "deepseek-r1-distill-llama-70b",
+            "qwen/qwen3-32b",
+        ],
+        index=0
+      )
+
+      st.link_button(
+    "🔑 Get a Groq API Key",
+    "https://console.groq.com/keys"
+     )
+
+      initialize = st.button(
+        "🚀 Initialize Agent"
+      )
+
+    if initialize:
+
+      if groq_api_key.strip() == "":
+         st.error("Please enter your Groq API Key.")
+         st.stop()
+
+      with st.spinner("Initializing Agent..."):
+
+         graph, chunks = initialize_system(
+            groq_api_key,
+            model_name
+         )
+
+         st.session_state.graph = graph
+         st.session_state.ready = True
+         st.session_state.api_key = groq_api_key
+         st.session_state.model_name = model_name
+
+      st.success(
+        f"✅ Loaded {chunks} document chunks."
+       )
     if not st.session_state.ready:
 
-        with st.spinner("Initializing system..."):
+       st.info(
+        "👈 Enter your Groq API Key and click 'Initialize Agent' to begin."
+    )
 
-            graph, chunks = initialize_system()
-
-            st.session_state.graph = graph
-            st.session_state.ready = True
-
-        st.success(
-            f"Loaded {chunks} document chunks."
-        )
+       st.stop()
 
     st.divider()
 

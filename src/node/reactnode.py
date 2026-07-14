@@ -1,7 +1,7 @@
 """LangGraph ReAct Agent Node"""
 
 from typing import List
-
+import re
 from src.state.rag_state import RAGState
 
 from langchain_core.documents import Document
@@ -12,9 +12,9 @@ from langgraph.prebuilt import create_react_agent
 from src.tool.calculator_tool import calculator
 from src.tool.github_tool import github_repository
 from src.tool.arxiv_tool import arxiv_search
-from src.tool.python_tool import python_executor
-from src.tool.diagram_tool import diagram_generator
-from src.tool.sql_tool import sql_generator
+from src.tool.python_tool import create_python_tool
+from src.tool.diagram_tool import create_diagram_tool
+from src.tool.sql_tool import create_sql_tool
 
 
 class RAGNodes:
@@ -58,15 +58,17 @@ Content:
                 )
 
             return "\n\n".join(output)
-
+        self.python_executor = create_python_tool(self.llm)
+        self.sql_generator = create_sql_tool(self.llm)
+        self.diagram_generator = create_diagram_tool(self.llm)
         tools = [
             retriever_tool,
             calculator,
             github_repository,
             arxiv_search,
-            python_executor,
-            diagram_generator,
-            sql_generator
+            self.python_executor,
+            self.diagram_generator,
+            self.sql_generator,
         ]
 
         prompt = """
@@ -170,35 +172,68 @@ Return only the final answer.
 
         python_keywords = [
             "python",
-            "code",
-            "program",
-            "script",
-            "algorithm",
-            "linked list",
-            "tree",
-            "graph",
-            "stack",
-            "queue",
-            "dfs",
-            "bfs",
-            "dynamic programming",
-            "recursion",
-            "sorting",
-            "searching",
-            "numpy",
-            "pandas",
-            "matplotlib",
-            "csv",
-            "dataframe",
-            "visualization",
-            "simulation",
+    "code",
+    "coding",
+    "program",
+    "script",
+    "algorithm",
+    "implement",
+    "implementation",
+    "generate code",
+    "write code",
+    "python function",
+    "function",
+    "class",
+    "object",
+    "oop",
+    "recursion",
+    "dynamic programming",
+    "dp",
+    "dfs",
+    "bfs",
+    "tree",
+    "binary tree",
+    "bst",
+    "graph",
+    "linked list",
+    "stack",
+    "queue",
+    "heap",
+    "trie",
+    "segment tree",
+    "hashmap",
+    "dictionary",
+    "set",
+    "binary search",
+    "merge sort",
+    "quick sort",
+    "selection sort",
+    "bubble sort",
+    "dijkstra",
+    "kruskal",
+    "prim",
+    "bellman ford",
+    "floyd warshall",
+    "topological sort",
+    "backtracking",
+    "sliding window",
+    "two pointers",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "seaborn",
+    "csv",
+    "dataframe",
+    "visualization",
+    "plot",
+    "automation",
         ]
           
         if any(k in question for k in python_keywords):
 
             print("\n========== PYTHON TOOL ==========\n")
 
-            answer = python_executor.invoke(
+            answer = self.python_executor.invoke(
                 {"task": state.question}
             )
 
@@ -208,35 +243,56 @@ Return only the final answer.
                 answer=answer,
             )
         sql_keywords = [
-            "sql",
-            "mysql",
-            "postgres",
-            "postgresql",
-            "sqlite",
-            "query",
-            "select",
-            "insert",
-             "update",
-            "delete",
-             "join",
-            "left join",
-             "right join",
-              "inner join",
-              "group by",
-             "having",
-            "order by",
-              "cte",
-             "row_number",
-            "dense_rank",
-            "rank",
-              "create table",
+             "sql",
+    "mysql",
+    "postgres",
+    "postgresql",
+    "sqlite",
+    "database",
+    "query",
+    "table",
+    "schema",
+    "primary key",
+    "foreign key",
+    "normalization",
+    "select",
+    "insert",
+    "update",
+    "delete",
+    "create table",
+    "drop table",
+    "alter table",
+    "join",
+    "left join",
+    "right join",
+    "inner join",
+    "full join",
+    "group by",
+    "having",
+    "order by",
+    "distinct",
+    "count",
+    "sum",
+    "avg",
+    "min",
+    "max",
+    "cte",
+    "window function",
+    "row_number",
+    "rank",
+    "dense_rank",
+    "lead",
+    "lag",
+    "trigger",
+    "view",
+    "stored procedure",
         ]
 
         if any(k in question for k in sql_keywords):
 
            print("\n========== SQL TOOL ==========\n")
 
-           answer = sql_generator.invoke(
+           answer = self.sql_generator.invoke(
              {"task": state.question}
             )
 
@@ -250,27 +306,30 @@ Return only the final answer.
         # ----------------------------------------
 
         diagram_keywords = [
-            "architecture",
             "diagram",
-            "flowchart",
-            "workflow",
-            "sequence diagram",
-            "class diagram",
-            "er diagram",
-            "uml",
-            "system design",
-            "hld",
-            "lld",
-            "microservice",
-            "network architecture",
-            "api flow",
+    "architecture",
+    "flowchart",
+    "workflow",
+    "sequence",
+    "sequence diagram",
+    "class diagram",
+    "er diagram",
+    "uml",
+    "state diagram",
+    "system design",
+    "microservice",
+    "network architecture",
+    "api flow",
+    "hld",
+    "lld",
+    "design",
         ]
 
         if any(k in question for k in diagram_keywords):
 
             print("\n========== DIAGRAM TOOL ==========\n")
 
-            answer = diagram_generator.invoke(
+            answer = self.diagram_generator.invoke(
                 {"prompt": state.question}
             )
 
@@ -279,11 +338,69 @@ Return only the final answer.
                 retrieved_docs=[],
                 answer=answer,
             )
+        github_keywords = [
+    "github",
+    "repository",
+    "repo",
+    "open source",
+]
 
+        if any(k in question for k in github_keywords):
+
+            print("\n========== GITHUB TOOL ==========\n")
+
+            answer = github_repository.invoke(
+            {"repo": state.question}
+    )
+
+            return RAGState(
+        question=state.question,
+        retrieved_docs=[],
+        answer=answer,
+            )
         # ----------------------------------------
         # Otherwise let ReAct decide
         # ----------------------------------------
+        paper_keywords = [
+    "paper",
+    "papers",
+    "research",
+    "research paper",
+    "survey",
+    "publication",
+    "arxiv",
+]
 
+        if any(k in question for k in paper_keywords):
+
+           print("\n========== ARXIV TOOL ==========\n")
+
+           answer = arxiv_search.invoke(
+          {"query": state.question}
+           )
+
+           return RAGState(
+        question=state.question,
+        retrieved_docs=[],
+        answer=answer,
+         )
+        
+        math_pattern = r"^[0-9+\-*/(). ]+$"
+
+        if re.fullmatch(math_pattern, state.question):
+
+           print("\n========== CALCULATOR TOOL ==========\n")
+ 
+           answer = calculator.invoke(
+        {"expression": state.question}
+    )
+
+           return RAGState(
+        question=state.question,
+        retrieved_docs=[],
+        answer=answer,
+    )
+        
         print("\n========== REACT AGENT ==========\n")
 
         result = self.agent.invoke(

@@ -1,30 +1,26 @@
 from langchain_core.tools import tool
-from langchain_groq import ChatGroq
-from src.config.config import Config
 
 
-llm = Config.get_llm()
+def create_sql_tool(llm):
 
+    @tool
+    def sql_generator(task: str) -> str:
+        """
+        Generate SQL queries.
 
-@tool
-def sql_generator(task: str) -> str:
-    """
-    Generate SQL queries.
+        Use this tool whenever the user asks for:
+        - SQL
+        - MySQL
+        - PostgreSQL
+        - SQLite
+        - Database queries
+        - Joins
+        - GROUP BY
+        - Window Functions
+        - CTE
+        """
 
-    Use this tool whenever the user asks for:
-
-    - SQL
-    - MySQL
-    - PostgreSQL
-    - SQLite
-    - Database queries
-    - Joins
-    - GROUP BY
-    - Window Functions
-    - CTE
-    """
-
-    prompt = f"""
+        prompt = f"""
 You are an expert SQL Engineer.
 
 Generate ONLY SQL.
@@ -41,7 +37,9 @@ User Request:
 {task}
 """
 
-    response = llm.invoke(prompt)
+        response = llm.invoke(prompt)
 
-    return response.content
+        return response.content
+
+    return sql_generator
 
