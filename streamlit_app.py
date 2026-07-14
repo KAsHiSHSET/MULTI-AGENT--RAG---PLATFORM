@@ -96,7 +96,10 @@ def init_session():
 
 
 def initialize_system(api_key, model_name):
-
+    print("=" * 60)
+    print("API KEY:", repr(api_key))
+    print("MODEL:", model_name)
+    print("=" * 60)
     llm = Config.get_llm(
         api_key=api_key,
         model_name=model_name
@@ -171,18 +174,15 @@ def main():
 
     if initialize:
 
-      if groq_api_key.strip() == "":
-        st.error("Please enter your Groq API Key.")
-        st.stop()
+       if groq_api_key.strip() == "":
+         st.error("Please enter your Groq API Key.")
+         st.stop()
 
-      st.session_state.api_key = groq_api_key
-      st.session_state.model_name = model_name
+       st.session_state.api_key = groq_api_key
+       st.session_state.model_name = model_name
 
-      with st.spinner("Initializing Agent..."):
-        st.write("API Key Length:", len(groq_api_key))
-        st.write("Model:", model_name)
-        print("API KEY:", repr(groq_api_key))
-        print("MODEL:", model_name)
+       with st.spinner("Initializing Agent..."):
+        
         graph, chunks = initialize_system(
             groq_api_key,
             model_name,
@@ -191,7 +191,7 @@ def main():
         st.session_state.graph = graph
         st.session_state.ready = True
 
-    st.success(f"✅ Loaded {chunks} document chunks.")
+        st.success(f"✅ Loaded {chunks} document chunks.")
     if not st.session_state.ready:
 
        st.info(

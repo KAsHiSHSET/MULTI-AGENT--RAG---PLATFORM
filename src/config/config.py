@@ -43,11 +43,12 @@ class Config:
     @classmethod
     def get_llm(cls, api_key=None, model_name=None):
 
-     print("CONFIG API:", repr(api_key))
-     print("ENV API:", repr(cls.GROQ_API_KEY))
+         print("Config.get_llm()")
+         print("api_key =", repr(api_key))
+         print("fallback =", repr(cls.GROQ_API_KEY))
  
-     return ChatGroq(
+         return ChatGroq(
         groq_api_key=api_key or cls.GROQ_API_KEY,
         model=model_name or cls.MODEL_NAME,
         temperature=0,
-    )
+       )
