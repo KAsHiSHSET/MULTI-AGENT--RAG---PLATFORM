@@ -94,7 +94,7 @@ def init_session():
 # Initialize RAG
 # -------------------------------
 
-@st.cache_resource
+
 def initialize_system(api_key, model_name):
 
     llm = Config.get_llm(
@@ -179,7 +179,10 @@ def main():
       st.session_state.model_name = model_name
 
       with st.spinner("Initializing Agent..."):
-
+        st.write("API Key Length:", len(groq_api_key))
+        st.write("Model:", model_name)
+        print("API KEY:", repr(groq_api_key))
+        print("MODEL:", model_name)
         graph, chunks = initialize_system(
             groq_api_key,
             model_name,
