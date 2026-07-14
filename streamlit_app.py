@@ -171,14 +171,14 @@ def main():
 
     if initialize:
 
-     if groq_api_key.strip() == "":
+      if groq_api_key.strip() == "":
         st.error("Please enter your Groq API Key.")
         st.stop()
 
-    st.session_state.api_key = groq_api_key
-    st.session_state.model_name = model_name
+      st.session_state.api_key = groq_api_key
+      st.session_state.model_name = model_name
 
-    with st.spinner("Initializing Agent..."):
+      with st.spinner("Initializing Agent..."):
 
         graph, chunks = initialize_system(
             groq_api_key,
